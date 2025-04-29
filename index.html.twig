@@ -1,86 +1,86 @@
 {% extends 'baseBack.html.twig' %}
 
-{% block title %}OneUrban | Dashboard | Liste des Transports{% endblock %}
+{% block title %}OneUrban | Dashboard | Liste des Billets{% endblock %}
 
 {% block body %}
-    <h1>| Liste des Transports</h1>
-    
+    <h1>| Liste des Billets</h1>
 
     <button style="margin-left:50px;width:150px;" class="btn btn-block btn-primary">
-        <a style="color:#fff;" href="{{ path('app_transport_new') }}"><i class="fa fa-plus"></i> Créer un nouveau</a>
+        <a style="color:#fff;" href="{{ path('app_billet_new') }}"><i class="fa fa-plus"></i> Créer un nouveau</a>
     </button>
     <br>
+
     <div style="background-color:#fff;">
         <br>
-        <input style="margin-left:30px;width:950px;" type="text" class="form-control" id="searchInput" placeholder="Search&hellip;">
+        <input style="margin-left:80px;width:950px;" type="text" class="form-control" id="searchInput" placeholder="Search&hellip;">
         <br><br>
-        <div style="margin-top:-135px;margin-left:1000px;" class="btn-group">
+        <div style="margin-top:-135px;margin-left:1050px;" class="btn-group">
             <button type="button" id="actionBtn" class="btn btn-info">Tri Par</button>
             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="{{ path('app_transport_index') }}" onclick="setActionText(this)">Défaut</a></li>
+                <li><a href="{{ path('app_billet_index') }}" onclick="setActionText(this)">Défaut</a></li>
                 <li class="divider"></li>
-                <li><a href="{{ path('app_transport_index_sort_placesLibres') }}" onclick="setActionText(this)">Places Libres</a></li>
-                <li><a href="{{ path('app_transport_index_sort_tarif') }}" onclick="setActionText(this)">Tarif</a></li>
-                <li><a href="{{ path('app_transport_index_sort_horaire') }}" onclick="setActionText(this)">Horaire</a></li>
-                <li><a href="{{ path('app_transport_index_sort_type') }}" onclick="setActionText(this)">Type</a></li>
+                <li><a href="{{ path('app_billet_index_sort_date') }}" onclick="setActionText(this)">Date Voyage</a></li>
+                <li><a href="{{ path('app_billet_index_sort_prix') }}" onclick="setActionText(this)">Prix</a></li>
+                <li><a href="{{ path('app_billet_index_sort_statut') }}" onclick="setActionText(this)">Statut</a></li>
+                <li><a href="{{ path('app_billet_index_sort_statutPaiement') }}" onclick="setActionText(this)">Statut de Paiement</a></li>
             </ul>
         </div>
-        <a style="margin-top:-175px;margin-left:1100px;" class="btn btn-warning" href="{{ path('app_transport_index_stat') }}">Statistiques</a>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Type</th>
-                    <th>Image</th>
-                    <th>Horaire</th>
-                    <th>Tarif</th>
-                    <th>Places Libres</th>
-                    <th>Départ</th>
-                    <th>Destination</th>
-                    <th>Company</th>
+                    <th>Date Voyage</th>
+                    <th>Prix</th>
+                    <th>Statut</th>
+                    <th>Statut de Paiement</th>
+                    <th>Transport</th>
+                    <th>Utilisateur</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-            {% for transport in transports %}
-                {% set img = transport.image %}
+            {% for billet in billets %}
                 <tr>
+                    <td>{{ billet.dateVoyage ? billet.dateVoyage|date('Y-m-d') : '' }}</td>
+                    <td>{{ billet.prix }} <strong> DT</strong></td>
                     <td>
-                        {% if transport.type == 'FLIGHT' %}
-                            <span class="label label-primary">Flight</span>
-                        {% elseif transport.type == 'BUS' %}
-                            <span class="label label-success">Bus</span>
-                        {% elseif transport.type == 'TRAIN' %}
-                            <span class="label label-danger">Train</span>
+                        {% if billet.status == 'CONFIRMED' %}
+                            <span class="label label-success">Confirmed</span>
+                        {% elseif billet.status == 'CANCELLED' %}
+                            <span class="label label-danger">Cancelled</span>
                         {% else %}
-                            <span class="label label-warning">{{ transport.type }}</span>
+                            <span class="label label-warning">{{ billet.status }}</span>
                         {% endif %}
                     </td>
                     <td>
-                        <img src="{{ asset(img) }}" style="height: 70px;" alt="Erreur Import.">
+                        {% if billet.paymentStatus == 'CASH' %}
+                            <span class="label label-primary">Cash</span>
+                        {% elseif billet.paymentStatus == 'CARD' %}
+                            <span class="label label-warning">Card</span>
+                        {% else %}
+                            <span class="label label-danger">{{ billet.paymentStatus }}</span>
+                        {% endif %}
                     </td>
-                    <td>{{ transport.horaire ? transport.horaire|date('H:i:s') : '' }}</td>
-                    <td>{{ transport.tarif }} <strong> DT</strong></td>
-                    <td>{{ transport.placesLibres }} <strong>places</strong></td>
-                    <td>{{ transport.depart }}</td>
-                    <td>{{ transport.destination }}</td>
+                    <td>{{ billet.transport.depart }} - {{ billet.transport.destination }}</td>
+                    <td>{{ billet.user.prenom }} {{ billet.user.nom }}</td>
                     <td>
-                        <span class="label label-warning">{{ transport.company }}</span>
-                    </td>
-                    <td>
-                        <button style="width:30px;" class="btn btn-block btn-info btn-sm"><a style="color:#fff;" href="{{ path('app_transport_show', {'id': transport.id}) }}"><i class="fa fa-ellipsis-v"></i></a></button>
+                        <button style="width:30px;" class="btn btn-block btn-info btn-sm"><a style="color:#fff;" href="{{ path('app_billet_show', {'id': billet.id}) }}"><i class="fa fa-ellipsis-v"></i></a></button>
                         &nbsp;
-                        <button style="margin-top:-50px;margin-left:35px;width:30px;" class="btn btn-block btn-success btn-sm"><a style="color:#fff;" href="{{ path('app_transport_edit', {'id': transport.id}) }}"><i class="fa fa-edit"></i></a></button>
+                        <button style="margin-top:-50px;margin-left:35px;width:30px;" class="btn btn-block btn-success btn-sm"><a style="color:#fff;" href="{{ path('app_billet_edit', {'id': billet.id}) }}"><i class="fa fa-edit"></i></a></button>
                         &nbsp;
-                        {{ include('transport/_delete_form.html.twig') }}
+                        {{ include('billet/_delete_form.html.twig') }}    
+                        {% if billet.status == 'CONFIRMED' %}
+                            <button style="margin-top:-30px;margin-left:107px;width:30px;" class="btn btn-block btn-warning btn-sm"><a style="color:#fff;" href="/billet/{{ billet.id }}/pdf"><i class="fa fa-print"></i></a></button>
+                        {% endif %}
+                                           
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="10">No Transports found</td>
+                    <td colspan="6">No Billet Found</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -116,5 +116,4 @@
     document.getElementById('searchInput').addEventListener('keyup', filterTable);
 </script>
 
-    
 {% endblock %}
