@@ -1,58 +1,58 @@
 {% extends 'baseBack.html.twig' %}
 
-{% block title %}OneUrban | Dashboard | Détails Centre Médical{% endblock %}
+{% block title %}OneUrban | Dashboard | Détails Rendez Vous{% endblock %}
 
 {% block body %}
-    <h1>| Détail Centre Médical </h1>
+    <h1>| Détails Rendez Vous</h1>
     <br>
     <div style="background-color:#fff;">
 
         <table class="table">
             <tbody>
                 <tr>
-                    <th>Nom</th>
-                    <td>{{ centremedicale.nom }}</td>
+                    <th>Date</th>
+                    <td>{{ rendezvou.date ? rendezvou.date|date('Y-m-d') : '' }}</td>
                 </tr>
                 <tr>
-                    <th>Type</th>
+                    <th>Heure</th>
+                    <td>{{ rendezvou.heure ? rendezvou.heure|date('H:i:s') : '' }}</td>
+                </tr>
+                <tr>
+                    <th>Statut</th>
                     <td>
-                        {% if centremedicale.type == 'HOSPITAL' %}
-                            <span class="label label-primary">Hospital</span>
-                        {% elseif centremedicale.type == 'CLINIC' %}
-                            <span class="label label-success">Clinic</span>
-                        {% elseif centremedicale.type == 'PHARMACY' %}
-                            <span class="label label-warning">Pharmacy</span>
+                        {% if rendezvou.status == 'Annulé' %}
+                            <span class="label label-danger">Annulé</span>
+                        {% elseif rendezvou.status == 'Confirmé' %}
+                            <span class="label label-success">Confirmé</span>
+                        {% elseif rendezvou.status == 'En Attente' %}
+                            <span class="label label-warning">En Attente</span>
                         {% else %}
-                            <span class="label label-danger">{{ centremedicale.type }}</span>
+                            <span class="label label-primary">{{ rendezvou.status }}</span>
                         {% endif %}
                     </td>
                 </tr>
                 <tr>
-                    <th>Localisation</th>
-                    <td>{{ centremedicale.localisation }}</td>
+                    <th>Nom de Médecin</th>
+                    <td>{{ rendezvou.nomMedecin }}</td>
                 </tr>
                 <tr>
-                    <th>Disponibilite</th>
-                    <td>
-                        {% if centremedicale.disponibilite == true %}
-                            <span class="label label-success">Yes</span>
-                        {% elseif centremedicale.disponibilite == false %}
-                            <span class="label label-danger">No</span>
-                        {% else %}
-                            <span class="label label-warning">{{ centremedicale.disponibilite }}</span>
-                        {% endif %}
-                    </td>
+                    <th>Centre Médical</th>
+                    <td>{{ rendezvou.centremedicale.nom }}</td>
+                </tr>
+                <tr>
+                    <th>Utilisateur</th>
+                    <td>{{ rendezvou.user.nom }} {{ rendezvou.user.prenom }}</td>
                 </tr>
             </tbody>
         </table>
         <div style="background-color:#fff;" align="center">
         <br>
             <button style="width:100px;" class="btn btn-block btn-info btn-sm">
-                <a style="color:#fff;" href="{{ path('app_centremedicale_index') }}">Back To List</a>
+                <a style="color:#fff;" href="{{ path('app_rendezvou_index') }}">Back To List</a>
             </button>
             &nbsp;
             <button style="margin-top:-50px;margin-left:160px;width:40px;" class="btn btn-block btn-success btn-sm">
-                <a style="color:#fff;" href="{{ path('app_centremedicale_edit', {'id': centremedicale.id}) }}"><i class="fa fa-edit"></i></a>
+                <a style="color:#fff;" href="{{ path('app_rendezvou_edit', {'id': rendezvou.id}) }}"><i class="fa fa-edit"></i></a>
             </button>
             <br>
         </div>
